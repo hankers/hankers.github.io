@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[My Octopress Blog]]></title>
+  <title><![CDATA[Hanker的博客]]></title>
   <link href="http://hankers.github.io/atom.xml" rel="self"/>
   <link href="http://hankers.github.io/"/>
-  <updated>2014-01-22T21:50:13+08:00</updated>
+  <updated>2014-01-22T22:02:38+08:00</updated>
   <id>http://hankers.github.io/</id>
   <author>
-    <name><![CDATA[Your Name]]></name>
+    <name><![CDATA[hanker]]></name>
     
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
