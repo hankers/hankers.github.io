@@ -9,7 +9,10 @@
   <meta name="author" content="hanker">
 
   
-  <meta name="description" content="回到家中已经半个月之久了，今天晚上总算可以静下心来坐在屏幕前想想我的2013这一年。我想我的2013就是上半年拼死拼活争取保研，下半年无奈苦逼准备考研这两个阶段。 学习 上半年拼死拼活争取保研，参加了数学建模国赛，美赛，信安竞赛，创项，甚至都参加了英语竞赛。。。 &hellip;">
+  <meta name="description" content="Makefile定义了一系列的规则来指定，哪些文件需要先编译，哪些文件需要后编译，哪些文件需要重新编译，甚至于进行更复杂的功能操作。 规则 target &hellip; : prerequisites &hellip;
+command
+&hellip;
+&hellip; target 目标文件 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -64,6 +67,312 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2014/02/10/makefilexue-xi-bi-ji/">MakeFile学习笔记</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-02-10T21:51:50+08:00" pubdate data-updated="true">Feb 10<span>th</span>, 2014</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Makefile定义了一系列的规则来指定，哪些文件需要先编译，哪些文件需要后编译，哪些文件需要重新编译，甚至于进行更复杂的功能操作。</p>
+
+<h2>规则</h2>
+
+<p>target &hellip; : prerequisites &hellip;
+command
+&hellip;
+&hellip;</p>
+
+<p>target 目标文件   可为Object File 可为执行文件 可为标签
+prerequisites 生成target所需要的文件或目标
+command make需要执行的命令</p>
+
+<h2>核心</h2>
+
+<p>prerequisites中如果有一个以上的文件比target文件要新的话，command所定义的命令就会被执行。</p>
+
+<h2>示例</h2>
+
+<p>一个工程有3个头文件和8个C文件
+MakeFile很自然为</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>edit : main.o kbd.o command.o display.o /
+</span><span class='line'>insert.o search.o files.o utils.o
+</span><span class='line'>cc -o edit main.o kbd.o command.o display.o /
+</span><span class='line'>insert.o search.o files.o utils.o
+</span><span class='line'>main.o : main.c defs.h
+</span><span class='line'>cc -c main.c
+</span><span class='line'>kbd.o : kbd.c defs.h command.h
+</span><span class='line'>cc -c kbd.c
+</span><span class='line'>command.o : command.c defs.h command.h
+</span><span class='line'>cc -c command.c
+</span><span class='line'>display.o : display.c defs.h buffer.h
+</span><span class='line'>cc -c display.c
+</span><span class='line'>insert.o : insert.c defs.h buffer.h
+</span><span class='line'>cc -c insert.c
+</span><span class='line'>search.o : search.c defs.h buffer.h
+</span><span class='line'>cc -c search.c
+</span><span class='line'>files.o : files.c defs.h buffer.h command.h
+</span><span class='line'>cc -c files.c
+</span><span class='line'>utils.o : utils.c defs.h
+</span><span class='line'>cc -c utils.c
+</span><span class='line'>
+</span><span class='line'>clean :
+</span><span class='line'>rm edit main.o kbd.o command.o display.o /
+</span><span class='line'>insert.o search.o files.o utils.o</span></code></pre></td></tr></table></div></figure>
+
+
+<p>在这个makefile中，目标文件（target）包含：执行文件edit和中间目标文件（*.o），依赖文件（prerequisites）就是冒号后面的那些 .c 文件和 .h文件。每一个 .o 文件都有一组依赖文件，而这些 .o 文件又是执行文件 edit 的依赖文件。
+在定义好依赖关系后，后续的那一行定义了如何生成目标文件的操作系统命令，一定要以一个Tab键作为开头。</p>
+
+<p>若在makefile中使用变量</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>objects = main.o kbd.o command.o display.o /
+</span><span class='line'>insert.o search.o files.o utils.o
+</span><span class='line'>
+</span><span class='line'>edit : $(objects)
+</span><span class='line'>cc -o edit $(objects)
+</span><span class='line'>main.o : main.c defs.h
+</span><span class='line'>cc -c main.c
+</span><span class='line'>kbd.o : kbd.c defs.h command.h
+</span><span class='line'>cc -c kbd.c
+</span><span class='line'>command.o : command.c defs.h command.h
+</span><span class='line'>cc -c command.c
+</span><span class='line'>display.o : display.c defs.h buffer.h
+</span><span class='line'>cc -c display.c
+</span><span class='line'>insert.o : insert.c defs.h buffer.h
+</span><span class='line'>cc -c insert.c
+</span><span class='line'>search.o : search.c defs.h buffer.h
+</span><span class='line'>cc -c search.c
+</span><span class='line'>files.o : files.c defs.h buffer.h command.h
+</span><span class='line'>cc -c files.c
+</span><span class='line'>utils.o : utils.c defs.h
+</span><span class='line'>cc -c utils.c
+</span><span class='line'>
+</span><span class='line'>clean :
+</span><span class='line'>rm edit $(objects)</span></code></pre></td></tr></table></div></figure>
+
+
+<p>又由于makefile自动推导,make会自动识别以及推导命令。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>objects = main.o kbd.o command.o display.o /
+</span><span class='line'>insert.o search.o files.o utils.o
+</span><span class='line'>edit : $(objects)
+</span><span class='line'>cc -o edit $(objects)
+</span><span class='line'>main.o : defs.h
+</span><span class='line'>kbd.o : defs.h command.h
+</span><span class='line'>command.o : defs.h command.h
+</span><span class='line'>display.o : defs.h buffer.h
+</span><span class='line'>insert.o : defs.h buffer.h
+</span><span class='line'>search.o : defs.h buffer.h
+</span><span class='line'>files.o : defs.h buffer.h command.h
+</span><span class='line'>utils.o : defs.h
+</span><span class='line'>
+</span><span class='line'>.PHONY : clean
+</span><span class='line'>clean :
+</span><span class='line'>-rm edit $(objects)</span></code></pre></td></tr></table></div></figure>
+
+
+<p>.PHONY 表示 clean是一个伪目标文件
+rm前加个-号表示无视某些文件出现的问题继续进行</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2014/02/09/linuxji-ben-cao-zuo/">Linux基本操作</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-02-09T00:11:12+08:00" pubdate data-updated="true">Feb 9<span>th</span>, 2014</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>1.帮助相关</h2>
+
+<ul>
+<li>man     查看关键词的manpage(manual page)</li>
+<li>&mdash;help  查看关键词的快捷帮助</li>
+<li>info    另外一个帮助命令，可以显示出更完整的最新的信息。</li>
+</ul>
+
+
+<h2>2.目录操作</h2>
+
+<ul>
+<li>ls      查看指定目录下的内容
+        -l 查看当前目录内容的详细信息。
+        -a 查看当前目录中的所有文件(包括隐藏文件)</li>
+<li>mkdir   创建目录
+        -p 创建多层目录   -p a/b  在当前目录下创建目录a,再在a目录下创建b</li>
+<li>pwd     打印当前目录(print working directory)，当不知到当前目录在哪时，可           以输入pwd获取当前目录位置。</li>
+<li>cd</li>
+<li>rmdir   删除空目录。</li>
+</ul>
+
+
+<h2>3.文件操作</h2>
+
+<ul>
+<li>touch</li>
+<li>cat/more/less</li>
+<li>rm</li>
+<li>cp</li>
+<li>mv</li>
+<li>ln</li>
+<li>tar</li>
+<li>chmod</li>
+<li>chown</li>
+<li>find/grep</li>
+</ul>
+
+
+<h2>4.磁盘操作</h2>
+
+<ul>
+<li>mount/umount</li>
+<li>df/du</li>
+</ul>
+
+
+<h2>5.进程相关</h2>
+
+<ul>
+<li>ps</li>
+<li>kill</li>
+<li>top</li>
+</ul>
+
+
+<h2>6.网络相关</h2>
+
+<ul>
+<li>ifconfig</li>
+<li>netstat</li>
+</ul>
+
+
+<p>7.其他</p>
+
+<ul>
+<li>环境变量</li>
+<li>ssh/scp</li>
+</ul>
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -142,6 +451,14 @@ ps.这是hanker的博客的第一篇博文，文笔还需锻炼。</p>
     <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2014/02/10/makefilexue-xi-bi-ji/">MakeFile学习笔记</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/02/09/linuxji-ben-cao-zuo/">Linux基本操作</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2014/01/23/wo-de-2013/">我的2013</a>

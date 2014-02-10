@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: tech | Hanker的博客]]></title>
+  <link href="http://hankers.github.io/blog/categories/tech/atom.xml" rel="self"/>
+  <link href="http://hankers.github.io/"/>
+  <updated>2014-02-10T22:19:43+08:00</updated>
+  <id>http://hankers.github.io/</id>
+  <author>
+    <name><![CDATA[hanker]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[MakeFile学习笔记]]></title>
+    <link href="http://hankers.github.io/blog/2014/02/10/makefilexue-xi-bi-ji/"/>
+    <updated>2014-02-10T21:51:50+08:00</updated>
+    <id>http://hankers.github.io/blog/2014/02/10/makefilexue-xi-bi-ji</id>
+    <content type="html"><![CDATA[<p>Makefile定义了一系列的规则来指定，哪些文件需要先编译，哪些文件需要后编译，哪些文件需要重新编译，甚至于进行更复杂的功能操作。</p>
+
+<h2>规则</h2>
+
+<p>target &hellip; : prerequisites &hellip;
+command
+&hellip;
+&hellip;</p>
+
+<p>target 目标文件   可为Object File 可为执行文件 可为标签
+prerequisites 生成target所需要的文件或目标
+command make需要执行的命令</p>
+
+<h2>核心</h2>
+
+<p>prerequisites中如果有一个以上的文件比target文件要新的话，command所定义的命令就会被执行。</p>
+
+<h2>示例</h2>
+
+<p>一个工程有3个头文件和8个C文件
+MakeFile很自然为
+```
+edit : main.o kbd.o command.o display.o /
+insert.o search.o files.o utils.o
+cc -o edit main.o kbd.o command.o display.o /
+insert.o search.o files.o utils.o
+main.o : main.c defs.h
+cc -c main.c
+kbd.o : kbd.c defs.h command.h
+cc -c kbd.c
+command.o : command.c defs.h command.h
+cc -c command.c
+display.o : display.c defs.h buffer.h
+cc -c display.c
+insert.o : insert.c defs.h buffer.h
+cc -c insert.c
+search.o : search.c defs.h buffer.h
+cc -c search.c
+files.o : files.c defs.h buffer.h command.h
+cc -c files.c
+utils.o : utils.c defs.h
+cc -c utils.c</p>
+
+<p>clean :
+rm edit main.o kbd.o command.o display.o /
+insert.o search.o files.o utils.o
+```</p>
+
+<p>在这个makefile中，目标文件（target）包含：执行文件edit和中间目标文件（*.o），依赖文件（prerequisites）就是冒号后面的那些 .c 文件和 .h文件。每一个 .o 文件都有一组依赖文件，而这些 .o 文件又是执行文件 edit 的依赖文件。
+在定义好依赖关系后，后续的那一行定义了如何生成目标文件的操作系统命令，一定要以一个Tab键作为开头。</p>
+
+<p>若在makefile中使用变量
+```
+objects = main.o kbd.o command.o display.o /
+insert.o search.o files.o utils.o</p>
+
+<p>edit : $(objects)
+cc -o edit $(objects)
+main.o : main.c defs.h
+cc -c main.c
+kbd.o : kbd.c defs.h command.h
+cc -c kbd.c
+command.o : command.c defs.h command.h
+cc -c command.c
+display.o : display.c defs.h buffer.h
+cc -c display.c
+insert.o : insert.c defs.h buffer.h
+cc -c insert.c
+search.o : search.c defs.h buffer.h
+cc -c search.c
+files.o : files.c defs.h buffer.h command.h
+cc -c files.c
+utils.o : utils.c defs.h
+cc -c utils.c</p>
+
+<p>clean :
+rm edit $(objects)
+<code>
+又由于makefile自动推导,make会自动识别以及推导命令。
+</code>
+objects = main.o kbd.o command.o display.o /
+insert.o search.o files.o utils.o
+edit : $(objects)
+cc -o edit $(objects)
+main.o : defs.h
+kbd.o : defs.h command.h
+command.o : defs.h command.h
+display.o : defs.h buffer.h
+insert.o : defs.h buffer.h
+search.o : defs.h buffer.h
+files.o : defs.h buffer.h command.h
+utils.o : defs.h</p>
+
+<p>.PHONY : clean
+clean :
+-rm edit $(objects)
+```
+.PHONY 表示 clean是一个伪目标文件
+rm前加个-号表示无视某些文件出现的问题继续进行</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Linux基本操作]]></title>
+    <link href="http://hankers.github.io/blog/2014/02/09/linuxji-ben-cao-zuo/"/>
+    <updated>2014-02-09T00:11:12+08:00</updated>
+    <id>http://hankers.github.io/blog/2014/02/09/linuxji-ben-cao-zuo</id>
+    <content type="html"><![CDATA[<h2>1.帮助相关</h2>
+
+<ul>
+<li>man     查看关键词的manpage(manual page)</li>
+<li>&mdash;help  查看关键词的快捷帮助</li>
+<li>info    另外一个帮助命令，可以显示出更完整的最新的信息。</li>
+</ul>
+
+
+<h2>2.目录操作</h2>
+
+<ul>
+<li>ls      查看指定目录下的内容
+        -l 查看当前目录内容的详细信息。
+        -a 查看当前目录中的所有文件(包括隐藏文件)</li>
+<li>mkdir   创建目录
+        -p 创建多层目录   -p a/b  在当前目录下创建目录a,再在a目录下创建b</li>
+<li>pwd     打印当前目录(print working directory)，当不知到当前目录在哪时，可           以输入pwd获取当前目录位置。</li>
+<li>cd</li>
+<li>rmdir   删除空目录。</li>
+</ul>
+
+
+<h2>3.文件操作</h2>
+
+<ul>
+<li>touch</li>
+<li>cat/more/less</li>
+<li>rm</li>
+<li>cp</li>
+<li>mv</li>
+<li>ln</li>
+<li>tar</li>
+<li>chmod</li>
+<li>chown</li>
+<li>find/grep</li>
+</ul>
+
+
+<h2>4.磁盘操作</h2>
+
+<ul>
+<li>mount/umount</li>
+<li>df/du</li>
+</ul>
+
+
+<h2>5.进程相关</h2>
+
+<ul>
+<li>ps</li>
+<li>kill</li>
+<li>top</li>
+</ul>
+
+
+<h2>6.网络相关</h2>
+
+<ul>
+<li>ifconfig</li>
+<li>netstat</li>
+</ul>
+
+
+<p>7.其他</p>
+
+<ul>
+<li>环境变量</li>
+<li>ssh/scp</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>
